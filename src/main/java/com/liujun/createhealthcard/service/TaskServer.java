@@ -29,8 +29,8 @@ public class TaskServer {
         lUser.setPassword("123");
         userList.add(lUser);
         User wUser = new User();
-        lUser.setUsername("吴康佳");
-        lUser.setPassword("123");
+        wUser.setUsername("吴康佳");
+        wUser.setPassword("123");
         userList.add(wUser);
     }
     @Scheduled(cron = "0 0 8 * * ? ")
