@@ -25,7 +25,7 @@ public class TaskServer {
     public static HashMap<String ,String> userMap = new HashMap<>();
 
     static {
-        String[] userNameList = {};
+        String[] userNameList = {"赵立彤","刘军","梁超升","吴康佳","沙洲","张宇新","毛骏龙","何亮","郝英利","张碧媛","何亮","郭超"};
         addUser(userNameList);
     }
 

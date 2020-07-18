@@ -7,7 +7,7 @@ class CreateHealthCardApplicationTests {
 
     @Test
     void contextLoads() {
-
+        System.out.println();
     }
 
 }
