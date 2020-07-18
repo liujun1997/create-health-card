@@ -1,5 +1,8 @@
 package com.liujun.createhealthcard.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.liujun.createhealthcard.entity.Header;
 import com.liujun.createhealthcard.entity.HeathCard;
 import com.liujun.createhealthcard.entity.User;
 import com.liujun.createhealthcard.utils.HttpUtils;
@@ -17,24 +20,22 @@ import java.util.*;
  */
 @Component
 public class TaskServer {
+
     public static List<User> userList = new ArrayList<>();
     public static HashMap<String ,String> userMap = new HashMap<>();
+
     static {
-        User user = new User();
-        user.setUsername("刘军");
-        user.setPassword("123");
-        userList.add(user);
-        User lUser = new User();
-        lUser.setUsername("梁超升");
-        lUser.setPassword("123");
-        userList.add(lUser);
-        User wUser = new User();
-        wUser.setUsername("吴康佳");
-        wUser.setPassword("123");
-        userList.add(wUser);
+        String[] userNameList = {};
+        addUser(userNameList);
     }
-    @Scheduled(cron = "0 0 8 * * ? ")
+
+    @Scheduled(cron = "0 0 9 * * ? ")
     public void taskCreateCard(){
+        StringBuilder successStringBuilder = new StringBuilder();
+        successStringBuilder.append("成功打卡人员名单: ");
+        StringBuilder failureStringBuilder = new StringBuilder();
+        failureStringBuilder.append("打卡失败人员名单: ");
+
         userList.forEach(user -> {
             CreateHealthCardService cardService = new CreateHealthCardService();
             cardService.createHealthCardService(user);
@@ -44,17 +45,34 @@ public class TaskServer {
             String temp = "36." + (1 + random.nextInt(5));
             HeathCard heathCard = new HeathCard(temp);
             String postResponse = HttpUtils.createPostResponse("http://218.104.196.10:8848/api/wa/create/health", null, heathCard, null);
-            System.out.println(postResponse);
-            Date date = new Date();
-            int day = date.getDate();
-            int mouth = date.getMonth() + 1;
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-            String time = sdf.format(date);
-            HttpUtils.sendMessage(user.getUsername() + "打卡成功" + time + " " + temp + " "+ postResponse);
-            userMap.put(user.getUsername() + mouth + day,postResponse);
+            Header header = null;
+            try {
+                header = new ObjectMapper().readValue(postResponse, Header.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            System.out.println(header);
+            if (header != null && "200".equals(header.getCode())){
+                successStringBuilder.append(user.getUsername()+ ":" + temp + " ");
+            }else {
+                failureStringBuilder.append(user.getUsername()+" ");
+            }
         });
 
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+        String time = sdf.format(date);
+        successStringBuilder.append(" ").append(failureStringBuilder);
+        HttpUtils.sendMessage( "打卡名单 " + time,successStringBuilder.toString());
+    }
+
+    private static void addUser(String[] userNameList){
+        for (String userName : userNameList) {
+            User user = new User();
+            user.setUsername(userName);
+            userList.add(user);
+        }
     }
 
 }

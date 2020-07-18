@@ -30,10 +30,11 @@ public class HttpUtils {
     private static String authTokenString = "";
     private static String url = "http://sc.ftqq.com/SCU69521T80bc11fbc828b0b16793f14e2f5129c55dfa0ea8a9741.send";
 
-    public static String sendMessage(String messgage){
+    public static String sendMessage(String text,String desp){
         StringBuffer stringBuffer = new StringBuffer();
         try {
-            stringBuffer.append("text="+ URLEncoder.encode(messgage,"utf-8"));
+            stringBuffer.append("text="+ URLEncoder.encode(text,"utf-8"));
+            stringBuffer.append("&desp="+URLEncoder.encode(desp,"utf-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -75,8 +76,6 @@ public class HttpUtils {
             httpPost = new HttpPost(url);
         }
 
-
-
         //给对象设置参数
         if (t != null){
             ObjectMapper objectMapper = new ObjectMapper();
@@ -109,7 +108,7 @@ public class HttpUtils {
         if (authToken != null ){
             httpRponse.setHeader("X-Auth-Token",authToken);
         }
-        if (authTokenString != ""){
+        if (!"".equals(authTokenString)){
             httpRponse.setHeader("X-Auth-Token",authTokenString);
         }
         CloseableHttpResponse response = null;
@@ -124,7 +123,8 @@ public class HttpUtils {
                 if (authCode != null){
                     authTokenString = authCode.getValue();
                     System.out.println(authTokenString);
-
+                }else {
+                    authTokenString = "";
                 }
                 return EntityUtils.toString(response.getEntity(), "utf-8");
             }
@@ -133,7 +133,6 @@ public class HttpUtils {
             e.printStackTrace();
         }finally {
             if (response != null){
-
                 try {
                     response.close();
                 } catch (IOException e) {
