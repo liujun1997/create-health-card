@@ -10,6 +10,7 @@ class CreateHealthCardApplicationTests {
         System.out.println("fafafafafafafafa");
         System.out.println("fafafa");
         System.out.println("fafafa");
+        System.out.println("test111111");
     }
 
 }
