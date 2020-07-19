@@ -11,6 +11,7 @@ class CreateHealthCardApplicationTests {
         System.out.println("fafafa");
         System.out.println("fafafa");
         System.out.println("local");
+        System.out.println("remote");
     }
 
 }
