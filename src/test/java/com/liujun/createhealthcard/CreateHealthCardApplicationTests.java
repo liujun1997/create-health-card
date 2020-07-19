@@ -7,7 +7,6 @@ class CreateHealthCardApplicationTests {
 
     @Test
     void contextLoads() {
-        System.out.println("fafafa");
+        System.out.println("fafafafafafafafa");
     }
-
 }
